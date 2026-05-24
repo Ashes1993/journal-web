@@ -42,3 +42,4 @@ next-env.d.ts
 
 # Docker Database
 postgres-data
+/src/generated/prisma
