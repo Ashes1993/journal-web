@@ -1,5 +1,6 @@
 import SideBar from "@/components/SideBar";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -7,6 +8,12 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+
+  // Check if the user is authenticated, if not redirect to the login page
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <main className="flex min-h-screen p-4 bg-gray-100">
       <SideBar user={session?.user ?? undefined} />
