@@ -5,13 +5,14 @@ import { Entry } from "@/generated/prisma/client";
 import { revalidatePath } from "next/cache";
 
 // Type Omit to exclude id and createdAt from the Entry type
-export type CreateEntryInput = Omit<Entry, "id" | "createdAt">;
+export type CreateEntryInput = Omit<
+  Entry,
+  "id" | "createdAt" | "userId" | "updatedAt"
+>;
 
 // Server action to fetch journal entries for the authenticated user
 export async function fetchJournalEntries() {
   const session = await auth();
-
-  console.log("DEBUG SESSION:", JSON.stringify(session, null, 2));
   const userId = session?.user?.id;
 
   if (!userId) return [];
@@ -52,5 +53,27 @@ export async function createJournalEntry(data: CreateEntryInput) {
   } catch (error) {
     console.error("Database Error:", error);
     return { success: false, error: "Failed to create entry" };
+  }
+}
+
+// Server action to fetch user tags for the authenticated user
+export async function fetchUserTags() {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) return { success: false, error: "You must be logged in" };
+
+  try {
+    const tags = await prisma.entry.findMany({
+      where: { userId: userId || undefined },
+      select: {
+        tags: true,
+      },
+    });
+    const uniqueTags = Array.from(new Set(tags.flatMap((entry) => entry.tags)));
+    return { success: true, tags: uniqueTags };
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { success: false, error: "Failed to fetch tags" };
   }
 }

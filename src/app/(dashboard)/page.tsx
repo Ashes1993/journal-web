@@ -1,3 +1,4 @@
+import AddEntryContainer from "@/components/home/AddEntryContainer";
 import JournalList from "@/components/home/JournalList";
 
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
     <div>
       <h1 className="text-3xl font-bold">Welcome to the Home</h1>
       <JournalList />
+      <AddEntryContainer />
     </div>
   );
 }
