@@ -1,10 +1,20 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { Entry } from "@/generated/prisma/client";
+import { revalidatePath } from "next/cache";
 
+// Type Omit to exclude id and createdAt from the Entry type
+export type CreateEntryInput = Omit<Entry, "id" | "createdAt">;
+
+// Server action to fetch journal entries for the authenticated user
 export async function fetchJournalEntries() {
   const session = await auth();
+
+  console.log("DEBUG SESSION:", JSON.stringify(session, null, 2));
   const userId = session?.user?.id;
+
+  if (!userId) return [];
 
   const journalEntries: object[] = await prisma.entry.findMany({
     where: {
@@ -15,4 +25,32 @@ export async function fetchJournalEntries() {
     },
   });
   return journalEntries;
+}
+
+// Server action to create a new journal entry for the authenticated user
+export async function createJournalEntry(data: CreateEntryInput) {
+  try {
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return { success: false, error: "You must be logged in" };
+    }
+
+    await prisma.entry.create({
+      data: {
+        title: data.title,
+        content: data.content,
+        mood: data.mood,
+        tags: data.tags,
+        userId: userId,
+      },
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { success: false, error: "Failed to create entry" };
+  }
 }
