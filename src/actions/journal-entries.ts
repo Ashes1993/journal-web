@@ -56,6 +56,29 @@ export async function createJournalEntry(data: CreateEntryInput) {
   }
 }
 
+// Server action to delete a journal entry by its ID for the authenticated user
+export async function deleteJournalEntry(entryId: string) {
+  // Check for authentication for security purposes before allowing deletion
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "You must be logged in" };
+  }
+
+  try {
+    await prisma.entry.delete({
+      where: {
+        id: entryId,
+        userId: session.user.id,
+      },
+    });
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { success: false, error: "Failed to delete entry" };
+  }
+}
+
 // Server action to fetch user tags for the authenticated user
 export async function fetchUserTags() {
   const session = await auth();
