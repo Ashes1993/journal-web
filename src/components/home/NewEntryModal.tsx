@@ -1,11 +1,9 @@
 "use client";
 import { createJournalEntry } from "@/actions/journal-entries";
+import { updateJournalEntry } from "@/actions/journal-entries";
 import { fetchUserTags } from "@/actions/journal-entries";
 import { useState, useEffect } from "react";
-
-interface NewEntryModalProps {
-  onClose: () => void;
-}
+import { useJournalStore } from "@/store/useJournalStore";
 
 const MOOD_OPTIONS = [
   { label: "happy", emoji: "😊" },
@@ -16,9 +14,18 @@ const MOOD_OPTIONS = [
   { label: "poker face", emoji: "😐" },
 ];
 
-export default function NewEntryModal({ onClose }: NewEntryModalProps) {
-  // Selected mood state to track the user's mood selection in the form
-  const [selectedMood, setSelectedMood] = useState<string>("happy");
+export default function NewEntryModal() {
+  const { editingEntry, closeModal } = useJournalStore();
+
+  // States to track the user input for the journal entry form
+  const [selectedMood, setSelectedMood] = useState(
+    editingEntry?.mood || "happy",
+  );
+  const [title, setTitle] = useState<string>(editingEntry?.title || "");
+  const [content, setContent] = useState<string>(editingEntry?.content || "");
+
+  // UI state to disable controls during active database execution pipelines
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Tags state to manage the list of tags input by the user for the journal entry
   const [allHistoricalTags, setAllHistoricalTags] = useState<string[]>([]);
@@ -49,28 +56,50 @@ export default function NewEntryModal({ onClose }: NewEntryModalProps) {
 
   // Handle form submission to create a new journal entry
   async function handleFormAction(formData: FormData) {
-    // Extracting data
-    const rawTitle = formData.get("title") as string;
-    const rawContent = formData.get("content") as string;
-    const mood = formData.get("mood") as string;
-    const rawTags = formData.get("tags") as string;
+    setIsSubmitting(true);
 
-    // Formatting the data for the server action
-    const entryData = {
-      title: rawTitle.trim(),
-      content: rawContent.trim(),
-      mood,
-      tags: rawTags ? JSON.parse(rawTags) : [],
-    };
+    let response: { success: boolean; error?: string } = { success: false };
 
-    // Trigger the action
-    const result = await createJournalEntry(entryData);
+    try {
+      // Extracting data
+      const rawTitle = formData.get("title") as string;
+      const rawContent = formData.get("content") as string;
+      const mood = formData.get("mood") as string;
+      const rawTags = formData.get("tags") as string;
 
-    // Reactivate UI logic
-    if (result.success) {
-      onClose();
-    } else {
-      alert(result.error || "Failed to create entry");
+      // Formatting the data for the server action
+      const entryData = {
+        title: rawTitle.trim(),
+        content: rawContent.trim(),
+        mood,
+        tags: rawTags ? JSON.parse(rawTags) : [],
+      };
+
+      if (!entryData.title) {
+        alert("A descriptive title is required.");
+        return;
+      }
+
+      if (editingEntry) {
+        response = await updateJournalEntry(editingEntry.id, entryData);
+      } else {
+        response = await createJournalEntry(entryData);
+      }
+
+      if (response.success) {
+        closeModal();
+      } else {
+        alert(
+          response.error || "A processing exception occurred on the cluster.",
+        );
+      }
+    } catch (error) {
+      console.error("System Crash Intercepted:", error);
+      alert(
+        "Network transport layer failure. Please verify connection credentials.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   }
   return (
@@ -78,7 +107,7 @@ export default function NewEntryModal({ onClose }: NewEntryModalProps) {
       className="fixed inset-0 w-full h-full flex items-center justify-center bg-slate-900/20 backdrop-blur-xs z-50"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          onClose();
+          closeModal();
         }
       }}
     >
@@ -88,17 +117,32 @@ export default function NewEntryModal({ onClose }: NewEntryModalProps) {
       >
         <button
           className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
-          onClick={onClose}
+          onClick={closeModal}
         >
           &times;
         </button>
-        <input type="text" placeholder="Title" name="title" />
+        <input
+          type="text"
+          placeholder="Title"
+          name="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="text-2xl font-bold border-b border-gray-100 py-1 focus:outline-none focus:border-blue-500"
+          disabled={isSubmitting}
+        />
 
-        <textarea placeholder="Content" name="content"></textarea>
+        <textarea
+          placeholder="Content"
+          name="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="border p-2 rounded"
+          disabled={isSubmitting}
+        ></textarea>
 
         <input type="hidden" name="mood" value={selectedMood} />
 
-        <div>
+        <div className="border-t border-b border-gray-50 py-2">
           <label htmlFor="mood">Mood:</label>
           {MOOD_OPTIONS.map((mood) => {
             return (
@@ -173,9 +217,18 @@ export default function NewEntryModal({ onClose }: NewEntryModalProps) {
 
         <button
           type="submit"
-          className="mt-auto ml-auto bg-blue-500 p-4 text-white rounded-2xl hover:bg-blue-600"
+          disabled={isSubmitting}
+          className={`mt-auto ml-auto font-semibold px-6 py-2.5 text-sm text-white rounded-xl shadow-sm transition-all ${
+            isSubmitting
+              ? "bg-slate-300 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
-          Save Entry
+          {isSubmitting
+            ? "Saving changes..."
+            : editingEntry
+              ? "Update Entry"
+              : "Save Entry"}{" "}
         </button>
       </form>
     </div>

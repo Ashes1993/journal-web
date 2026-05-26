@@ -2,14 +2,20 @@
 
 import AddEntryButton from "./AddEntryButton";
 import NewEntryModal from "./NewEntryModal";
-import { useState } from "react";
+import { useJournalStore } from "@/store/useJournalStore"; // Import your store
 
 export default function AddEntryContainer() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  // Connect to the global state and the open action
+  const isOpen = useJournalStore((state) => state.isOpen);
+  const openModal = useJournalStore((state) => state.openModal);
+
   return (
     <div>
-      <AddEntryButton onClick={() => setIsModalOpen(true)} />
-      {isModalOpen && <NewEntryModal onClose={() => setIsModalOpen(false)} />}
+      {/* Call openModal with no arguments for a fresh, blank entry */}
+      <AddEntryButton onClick={() => openModal()} />
+
+      {/* Let the global store control the visibility */}
+      {isOpen && <NewEntryModal />}
     </div>
   );
 }

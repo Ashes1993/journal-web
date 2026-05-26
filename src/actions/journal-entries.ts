@@ -100,3 +100,34 @@ export async function fetchUserTags() {
     return { success: false, error: "Failed to fetch tags" };
   }
 }
+
+// Server action to update a journal entry by its ID for the authenticated user
+export async function updateJournalEntry(
+  entryId: string,
+  data: CreateEntryInput,
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "You must be logged in" };
+  }
+
+  try {
+    await prisma.entry.update({
+      where: {
+        id: entryId,
+        userId: session.user.id,
+      },
+      data: {
+        title: data.title,
+        content: data.content,
+        mood: data.mood,
+        tags: data.tags,
+      },
+    });
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { success: false, error: "Failed to update entry" };
+  }
+}
