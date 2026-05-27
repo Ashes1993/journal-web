@@ -32,17 +32,19 @@ export default function SideBar({ user }: SideBarProps) {
       </nav>
       <div className="mt-auto">
         {user ? (
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 rounded-full bg-gray-400 mb-2">
-              <Image
-                src={user.image || "/default-avatar.png"}
-                alt={user.name || "User Avatar"}
-                width={40}
-                height={40}
-                className="w-full h-full rounded-full object-cover"
-              />
+          <div>
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 rounded-full bg-gray-400 mb-2">
+                <Image
+                  src={user.image || "/default-avatar.png"}
+                  alt={user.name || "User Avatar"}
+                  width={40}
+                  height={40}
+                  className="w-full h-auto rounded-full object-cover"
+                />
+              </div>
+              <p className="text-md text-gray-600">{user.name}</p>
             </div>
-            <p className="text-lg text-gray-600">{user.name}</p>
             <SignOutButton />
           </div>
         ) : (
