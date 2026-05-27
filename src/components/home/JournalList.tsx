@@ -1,6 +1,7 @@
 import { fetchJournalEntries } from "@/actions/journal-entries";
-import JournalEntryCard from "./JournalEntryCard";
 import { Entry } from "@/generated/prisma/client";
+import ListControl from "./ListControl";
+import FilteredJournalList from "./FilteredJournalList";
 
 // JournalEntryProps defines the structure of a journal entry object, including its ID, title, content, mood, tags, and creation date.
 export interface JournalEntryProps {
@@ -21,10 +22,9 @@ export default async function JournalList() {
   }
 
   return (
-    <ul>
-      {journalEntries.map((entry) => {
-        return <JournalEntryCard key={entry.id} entry={entry} />;
-      })}
-    </ul>
+    <div>
+      <ListControl />
+      <FilteredJournalList journalEntries={journalEntries} />
+    </div>
   );
 }
