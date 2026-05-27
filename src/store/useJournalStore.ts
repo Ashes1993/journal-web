@@ -9,6 +9,11 @@ interface JournalState {
   closeModal: () => void;
   sortBy: "newest" | "oldest";
   setSortBy: (sort: "newest" | "oldest") => void;
+  filterMood: string | null;
+  setFilterMood: (mood: string | null) => void;
+  filterTags: string[];
+  toggleFilterTag: (tag: string) => void;
+  clearFilters: () => void;
 }
 
 export const useJournalStore = create<JournalState>()(
@@ -20,6 +25,23 @@ export const useJournalStore = create<JournalState>()(
       openModal: (entry) => set({ isOpen: true, editingEntry: entry || null }),
       closeModal: () => set({ isOpen: false, editingEntry: null }),
       setSortBy: (sort) => set({ sortBy: sort }),
+      filterMood: null,
+      setFilterMood: (mood) =>
+        set((state) => ({
+          filterMood: state.filterMood === mood ? null : mood,
+        })),
+      filterTags: [],
+      // Adds a tag if missing, removes it if clicked again
+      toggleFilterTag: (tag) =>
+        set((state) => {
+          const exists = state.filterTags.includes(tag);
+          return {
+            filterTags: exists
+              ? state.filterTags.filter((t) => t !== tag)
+              : [...state.filterTags, tag],
+          };
+        }),
+      clearFilters: () => set({ filterMood: null, filterTags: [] }),
     }),
     {
       name: "journal-storage",
