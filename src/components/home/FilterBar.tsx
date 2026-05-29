@@ -47,7 +47,6 @@ export default function FilterBar({
               }`}
             >
               <span className="mr-1">{mood.emoji}</span>
-              {mood.label}
             </button>
           );
         })}
