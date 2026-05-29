@@ -27,7 +27,7 @@ export default function FilterBar({
   const hasActiveFilters = filterMood !== null || filterTags.length > 0;
 
   return (
-    <div className="p-4 mx-4 mb-2 bg-slate-50/60 border border-slate-100 rounded-2xl space-y-3">
+    <div className="p-4 mx-4 mb-2 bg-slate-200/60 border border-slate-100 rounded-2xl space-y-3">
       {/* Mood Filtering Section */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-2">
