@@ -3,6 +3,7 @@
 import { Entry } from "@/generated/prisma/client";
 import { useJournalStore } from "@/store/useJournalStore";
 import JournalEntryCard from "./JournalEntryCard";
+import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
 import SortBar from "./SortBar";
 
@@ -14,6 +15,7 @@ export default function FilteredJournalList({
   const sortBy = useJournalStore((state) => state.sortBy);
   const filterMood = useJournalStore((state) => state.filterMood);
   const filterTags = useJournalStore((state) => state.filterTags);
+  const searchQuery = useJournalStore((state) => state.searchQuery);
 
   // Gather all unique tags from the journal entries for the filter options
   const uniqueAvailableTags = Array.from(
@@ -23,14 +25,24 @@ export default function FilteredJournalList({
   // Execute the Cumulative filtering pipeline
   let processedEntries = [...journalEntries];
 
-  // Gate A: Apply Mood Filter
+  // Gate A: Apply Search Query
+  if (searchQuery.trim()) {
+    const lowerQuery = searchQuery.toLowerCase().trim();
+    processedEntries = processedEntries.filter(
+      (entry) =>
+        entry.title.toLowerCase().includes(lowerQuery) ||
+        (entry.content || "").toLowerCase().includes(lowerQuery),
+    );
+  }
+
+  // Gate B: Apply Mood Filter
   if (filterMood) {
     processedEntries = processedEntries.filter(
       (entry) => entry.mood === filterMood,
     );
   }
 
-  // Gate B: Apply Tag Filter (Ensures entry contain ALL selected tags)
+  // Gate C: Apply Tag Filter (Ensures entry contain ALL selected tags)
   if (filterTags.length > 0) {
     processedEntries = processedEntries.filter((entry) =>
       filterTags.every((tag) => entry.tags.includes(tag)),
@@ -46,6 +58,7 @@ export default function FilteredJournalList({
 
   return (
     <div className="space-y-2">
+      <SearchBar />
       <FilterBar availableTags={uniqueAvailableTags} />
       <SortBar />
       {processedEntries.length === 0 ? (

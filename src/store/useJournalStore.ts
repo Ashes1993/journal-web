@@ -14,6 +14,8 @@ interface JournalState {
   filterTags: string[];
   toggleFilterTag: (tag: string) => void;
   clearFilters: () => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 export const useJournalStore = create<JournalState>()(
@@ -42,6 +44,8 @@ export const useJournalStore = create<JournalState>()(
           };
         }),
       clearFilters: () => set({ filterMood: null, filterTags: [] }),
+      searchQuery: "",
+      setSearchQuery: (query) => set({ searchQuery: query }),
     }),
     {
       name: "journal-storage",
