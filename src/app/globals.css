@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #fafafa; /* Clean off-white background */
+  --foreground: #0f172a; /* Deep slate-900 for premium readability */
+  --card-bg: #ffffff; /* White */
+  --border-muted: #e2e8f0; /* Slate-200 for clean structural lines */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #090d16; /* Deep cosmic navy/black */
+    --foreground: #f8fafc; /* Slate-50 */
+    --card-bg: #111827; /* Gray-900 */
+    --border-muted: #1f2937; /* Gray-800 */
+  }
+}
+
+@theme inline {
+  --color-app-bg: var(--background);
+  --color-app-text: var(--foreground);
+  --color-card: var(--card-bg);
+  --color-muted-border: var(--border-muted);
+
+  --animate-fade-slide-up: fade-slide-up 0.2s ease-out;
+
+  @keyframes fade-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.form-input-base {
+  width: 100%;
+  font-size: 0.875rem;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-muted);
+  border-radius: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  color: var(--foreground);
+  outline: none;
+  tranition: all 0.15s ease-in-out;
+}
+
+.form-input-base:focus {
+  border-color: #2563eb; /* blue-600 */
+  box-shadow: 0 0 0 1px #2563eb;
 }
