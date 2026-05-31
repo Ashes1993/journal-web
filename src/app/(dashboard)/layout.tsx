@@ -9,17 +9,22 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
 
-  // Check if the user is authenticated, if not redirect to the login page
+  // Route guard: Redirect unauthenticated users safely
   if (!session) {
     redirect("/login");
   }
 
   return (
-    <main className="flex min-h-screen p-4 bg-gray-100">
+    <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-200">
+      {/* Structural Sidebar Layer */}
       <SideBar user={session?.user ?? undefined} />
-      <section className="flex-1 p-4 border border-gray-200 rounded-2xl shadow-2xl shadow-gray-400">
-        {children}
-      </section>
-    </main>
+
+      {/* Main Content Area Viewport */}
+      <main className="flex-1 flex flex-col min-w-0 p-3 sm:p-4 md:p-6 lg:p-8">
+        <section className="flex-1 w-full bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 rounded-2xl shadow-sm p-4 md:p-6 overflow-x-hidden">
+          {children}
+        </section>
+      </main>
+    </div>
   );
 }
