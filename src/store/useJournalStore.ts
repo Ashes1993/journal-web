@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Entry } from "@/generated/prisma/client";
 import { persist } from "zustand/middleware";
+import { fetchJournalEntries } from "@/actions/journal-entries";
 
 interface JournalState {
   isOpen: boolean;
@@ -16,11 +17,16 @@ interface JournalState {
   clearFilters: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  journalEntries: Entry[];
+  hasMore: boolean;
+  isLoadingMore: boolean;
+  setInitialEntries: (entries: Entry[], hasMore: boolean) => void;
+  loadMoreEntries: () => Promise<void>;
 }
 
 export const useJournalStore = create<JournalState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isOpen: false,
       editingEntry: null,
       sortBy: "newest",
@@ -46,6 +52,36 @@ export const useJournalStore = create<JournalState>()(
       clearFilters: () => set({ filterMood: null, filterTags: [] }),
       searchQuery: "",
       setSearchQuery: (query) => set({ searchQuery: query }),
+
+      // Pagination state and actions
+      journalEntries: [],
+      hasMore: true,
+      isLoadingMore: false,
+      setInitialEntries: (entries, hasMore) =>
+        set({ journalEntries: entries, hasMore }),
+      loadMoreEntries: async () => {
+        const { journalEntries, hasMore, isLoadingMore } = get();
+        if (!hasMore || isLoadingMore) return;
+        set({ isLoadingMore: true });
+        const currentOffset = journalEntries.length;
+
+        // Fetch the next batch of entries
+        const newEntries = (
+          await fetchJournalEntries({ skip: currentOffset, take: 12 })
+        ).entries as Entry[];
+        if (newEntries.length < 12) {
+          set({
+            journalEntries: [...journalEntries, ...newEntries],
+            hasMore: false,
+          });
+        } else {
+          set({
+            journalEntries: [...journalEntries, ...newEntries],
+            hasMore: true,
+          });
+        }
+        set({ isLoadingMore: false });
+      },
     }),
     {
       name: "journal-storage",

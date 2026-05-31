@@ -11,11 +11,14 @@ export type CreateEntryInput = Omit<
 >;
 
 // Server action to fetch journal entries for the authenticated user
-export async function fetchJournalEntries() {
+export async function fetchJournalEntries({
+  skip = 0,
+  take,
+}: { skip?: number; take?: number } = {}) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) return [];
+  if (!userId) return { success: false, entries: [] };
 
   const journalEntries: object[] = await prisma.entry.findMany({
     where: {
@@ -24,8 +27,10 @@ export async function fetchJournalEntries() {
     orderBy: {
       createdAt: "desc",
     },
+    skip: skip,
+    ...(take !== undefined ? { take } : {}),
   });
-  return journalEntries;
+  return { success: true, entries: journalEntries };
 }
 
 // Server action to create a new journal entry for the authenticated user
