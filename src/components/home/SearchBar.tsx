@@ -1,17 +1,21 @@
 "use client";
 
 import { useJournalStore } from "@/store/useJournalStore";
+import { Search, X } from "lucide-react";
 
 export default function SearchBar() {
   const searchQuery = useJournalStore((state) => state.searchQuery);
   const setSearchQuery = useJournalStore((state) => state.setSearchQuery);
 
   return (
-    <form className="relative">
+    <div className="relative w-full group">
+      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+        <Search className="w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
+      </div>
       <input
         type="text"
-        placeholder="Search..."
-        className="w-full p-2 mt-2 bg-slate-200 text-slate-500 placeholder:text-slate-400 border border-slate-200 rounded-2xl active:outline-none focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+        placeholder="Search titles or content..."
+        className="w-full pl-11 pr-10 py-2.5 bg-card text-app-text placeholder:text-slate-400 border border-muted-border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm shadow-xs"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
@@ -19,11 +23,11 @@ export default function SearchBar() {
         <button
           type="button"
           onClick={() => setSearchQuery("")}
-          className="absolute right-4 top-3 text-slate-400 text-2xl hover:text-slate-600 transition"
+          className="absolute inset-y-0 right-3 flex items-center justify-center p-1 my-auto h-7 w-7 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
         >
-          &times;
+          <X className="w-4 h-4" />
         </button>
       )}
-    </form>
+    </div>
   );
 }

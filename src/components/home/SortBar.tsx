@@ -2,16 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useJournalStore } from "@/store/useJournalStore";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
 
 export default function SortBar() {
   const sortBy = useJournalStore((state) => state.sortBy);
   const setSortBy = useJournalStore((state) => state.setSortBy);
-
-  // Local state to track open/closed menu status
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close the menu automatically if the user clicks anywhere else on the screen
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -26,54 +24,38 @@ export default function SortBar() {
   }, []);
 
   const options = [
-    { value: "newest", label: "Newest" },
-    { value: "oldest", label: "Oldest" },
+    { value: "newest", label: "Newest first" },
+    { value: "oldest", label: "Oldest first" },
   ];
 
   const currentLabel =
-    options.find((opt) => opt.value === sortBy)?.label || "Newest";
+    options.find((opt) => opt.value === sortBy)?.label || "Newest first";
 
   return (
-    <div className="ml-4 flex items-center" ref={dropdownRef}>
-      <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-2 select-none">
-        Sort by:
-      </label>
+    <div className="flex items-center gap-2 shrink-0" ref={dropdownRef}>
+      <span className="hidden md:inline text-xs font-bold text-slate-400 uppercase tracking-wider select-none">
+        Sort:
+      </span>
 
-      {/* Dropdown Container Context Wrapper */}
-      <div className="relative w-28">
-        {/* The Visible Select Trigger Box */}
+      <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full text-left py-1 px-3 text-xs text-slate-600 bg-white border transition-all duration-200 flex items-center justify-between ${
+          className={`px-4 py-2.5 text-xs bg-card border border-muted-border rounded-2xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 shadow-xs cursor-pointer ${
             isOpen
-              ? "border-slate-300 border-b-transparent rounded-t-xl shadow-xs"
-              : "border-slate-200 rounded-xl hover:border-slate-300 shadow-xs"
+              ? "border-slate-400 dark:border-slate-600 ring-2 ring-slate-500/5"
+              : ""
           }`}
         >
-          <span className="font-medium text-slate-700">{currentLabel}</span>
-
-          {/* Animated chevron arrow rotation indicator */}
-          <svg
-            className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${
-              isOpen ? "rotate-180 text-blue-500" : ""
-            }`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+          <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
+          <span>{currentLabel}</span>
+          <ChevronDown
+            className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180 text-blue-500" : ""}`}
+          />
         </button>
 
-        {/* The Continuous Options List Panel */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white border border-slate-300 border-t-0 rounded-b-xl shadow-md z-30 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150 origin-top">
+          <div className="absolute top-full right-0 mt-1 w-36 bg-card border border-muted-border rounded-xl shadow-lg z-40 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150 origin-top-right">
             {options.map((option) => {
               const isSelected = sortBy === option.value;
               return (
@@ -84,10 +66,10 @@ export default function SortBar() {
                     setSortBy(option.value as "newest" | "oldest");
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 text-xs transition-colors ${
+                  className={`w-full text-left px-3 py-2 text-xs transition-colors cursor-pointer ${
                     isSelected
-                      ? "bg-blue-50/80 text-blue-600 font-semibold"
-                      : "text-slate-600 hover:bg-slate-50"
+                      ? "bg-blue-50/80 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                   }`}
                 >
                   {option.label}
