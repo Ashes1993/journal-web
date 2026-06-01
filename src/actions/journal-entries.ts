@@ -136,3 +136,66 @@ export async function updateJournalEntry(
     return { success: false, error: "Failed to update entry" };
   }
 }
+
+// Server action to fetch journal entries for currently visible month in calendar view for the authenticated user
+export async function fetchJournalEntriesForMonth(year: number, month: number) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) return { success: false, entries: [] };
+
+  try {
+    const startDate = new Date(year, month, 1);
+    const endDate = new Date(year, month + 1, 0, 23, 59, 59, 999);
+
+    const entries = await prisma.entry.findMany({
+      where: {
+        userId: userId,
+        createdAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      select: {
+        createdAt: true,
+      },
+    });
+    return { success: true, entries: entries };
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { success: false, entries: [] };
+  }
+}
+
+// Server action to fetch journal entries for a specific date for the authenticated user
+export async function fetchJournalEntriesForDate(date: Date) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) return { success: false, entries: [] };
+
+  try {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const entries = await prisma.entry.findMany({
+      where: {
+        userId: userId,
+        createdAt: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return { success: true, entries: entries };
+  } catch (error) {
+    console.error("Database Error:", error);
+    return { success: false, entries: [] };
+  }
+}
