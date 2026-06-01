@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { deleteJournalEntry } from "@/actions/journal-entries";
 import { useJournalStore } from "@/store/useJournalStore";
 import { Entry } from "@/generated/prisma/client";
-import { Edit2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 const MOOD_EMOJIS: Record<string, string> = {
   happy: "😊",
@@ -16,8 +15,10 @@ const MOOD_EMOJIS: Record<string, string> = {
 };
 
 export default function JournalEntryCard({ entry }: { entry: Entry }) {
-  const openModal = useJournalStore((state) => state.openModal);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const { openModal, removeEntry, setIsDeleting, isDeleting } =
+    useJournalStore();
+
+  const isThisDeleting = isDeleting === entry.id;
 
   // Format the creation date nicely
   const formatDate = (dateInput: Date | string) => {
@@ -29,28 +30,31 @@ export default function JournalEntryCard({ entry }: { entry: Entry }) {
     });
   };
 
-  const handleDelete = async () => {
+  // Delete handler with confirmation and loading state
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+
     if (!confirm("Are you sure you want to permanently purge this entry?"))
       return;
 
-    setIsDeleting(true);
     try {
+      setIsDeleting(entry.id);
       const response = await deleteJournalEntry(entry.id);
-      if (!response.success) {
-        alert(response.error || "Failed to complete deletion routine.");
+      if (response.success) {
+        removeEntry(entry.id);
       }
     } catch (err) {
       console.error(err);
-      alert("Network transport error during data purge execution.");
     } finally {
-      setIsDeleting(false);
+      setIsDeleting(null);
     }
   };
 
   return (
-    /* Changed root node from <li> to <div> to prevent invalid nested lists */
-    /* Added h-full and removed m-4 to let the parent CSS Grid manage spacing */
-    <div className="p-5 border border-muted-border rounded-2xl bg-card shadow-xs flex flex-col h-full justify-between gap-4 transition-all hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 group">
+    <div
+      onClick={() => openModal(entry)}
+      className="p-5 border border-muted-border rounded-2xl bg-card shadow-xs flex flex-col h-full justify-between gap-4 transition-all hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 group active:scale-[0.98] active:shadow-inner"
+    >
       <div className="space-y-2">
         <div className="flex items-start justify-between gap-2">
           <div className="space-y-0.5">
@@ -69,7 +73,6 @@ export default function JournalEntryCard({ entry }: { entry: Entry }) {
           </span>
         </div>
 
-        {/* line-clamp-3 caps text overflow cleanly in responsive multi-column environments */}
         <p className="text-slate-600 dark:text-slate-400 text-sm whitespace-pre-wrap line-clamp-3">
           {entry.content}
         </p>
@@ -92,21 +95,12 @@ export default function JournalEntryCard({ entry }: { entry: Entry }) {
         <div className="flex justify-end gap-1 pt-3 border-t border-slate-100 dark:border-slate-800/60">
           <button
             type="button"
-            onClick={() => openModal(entry)}
-            disabled={isDeleting}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-xl transition-all disabled:opacity-40 cursor-pointer"
-          >
-            <Edit2 className="w-3.5 h-3.5" />
-            Edit
-          </button>
-          <button
-            type="button"
             onClick={handleDelete}
-            disabled={isDeleting}
+            disabled={isThisDeleting}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all disabled:opacity-40 cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isThisDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>
