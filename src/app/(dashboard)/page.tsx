@@ -10,7 +10,7 @@ export default function Home() {
             My Journal
           </h1>
           <p className="text-slate-500 text-sm md:text-base">
-            Capture your thoughts, noods, and milestones.
+            Capture your thoughts, moods, and milestones.
           </p>
         </header>
 

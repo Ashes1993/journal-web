@@ -1,6 +1,7 @@
 import SideBar from "@/components/SideBar";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import ModalProvider from "@/components/modals/ModalProvider";
 
 export default async function DashboardLayout({
   children,
@@ -15,7 +16,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-200">
+    <div className="relative flex flex-col md:flex-row min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-200">
       {/* Structural Sidebar Layer */}
       <SideBar user={session?.user ?? undefined} />
 
@@ -25,6 +26,7 @@ export default async function DashboardLayout({
           {children}
         </section>
       </main>
+      <ModalProvider />
     </div>
   );
 }
