@@ -50,7 +50,7 @@ export const useJournalStore = create<JournalState>()(
       updateEntry: (updatedEntry) =>
         set((state) => ({
           journalEntries: state.journalEntries.map((e) =>
-            e.id === updatedEntry.id ? updatedEntry : e,
+            e.id === updatedEntry?.id ? updatedEntry : e,
           ),
         })),
       removeEntry: (entryId) =>

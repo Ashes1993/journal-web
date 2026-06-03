@@ -61,7 +61,6 @@ export default function EntryModal() {
     }
   };
 
-  // Removed unused 'formData' to fix ESLint error
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSubmitting(true);
@@ -80,6 +79,7 @@ export default function EntryModal() {
     }
 
     try {
+      console.log("Updating entry with data:", entryData);
       if (editingEntry) {
         // Cast response or handle the union type specifically
         const response = (await updateJournalEntry(
@@ -110,18 +110,21 @@ export default function EntryModal() {
       className="fixed inset-0 w-full h-full flex items-end md:items-center justify-center bg-slate-950/60 backdrop-blur-sm z-[100] p-0 md:p-4"
       onClick={(e) => e.target === e.currentTarget && closeModal()}
     >
+      {/* The form */}
       <form
         className="relative flex flex-col bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-t-[2.5rem] md:rounded-[2rem] shadow-2xl w-full max-h-[95vh] md:max-h-[85vh] h-auto gap-6 md:max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-300"
         onSubmit={handleSubmit}
       >
+        {/* Close button */}
         <button
           type="button"
           className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all"
           onClick={closeModal}
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5 hover:rotate-180 transition-all hover:text-red-500" />
         </button>
 
+        {/* Title section */}
         <input
           type="text"
           placeholder="Give it a title..."
@@ -131,14 +134,16 @@ export default function EntryModal() {
           disabled={isSubmitting}
         />
 
+        {/* Content section */}
         <textarea
           placeholder="What's on your mind?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full flex-1 min-h-[150px] bg-transparent text-lg resize-none focus:outline-none text-slate-700 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 leading-relaxed"
+          className="w-full flex-1 min-h-[150px] bg-transparent text-lg resize-none focus:outline-none text-slate-700 border border-muted-border rounded-xl p-2 dark:text-slate-300 placeholder:text-slate-300 dark:placeholder:text-slate-700 leading-relaxed"
           disabled={isSubmitting}
         />
 
+        {/* Mood Section */}
         <div className="space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Current Mood
@@ -152,7 +157,7 @@ export default function EntryModal() {
                 className={`flex items-center gap-2 px-4 py-2 rounded-2xl border transition-all ${
                   selectedMood === mood.label
                     ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20"
-                    : "bg-slate-50 dark:bg-slate-800/50 border-transparent text-slate-500"
+                    : "bg-slate-100 dark:bg-slate-800/50 border-transparent text-slate-500"
                 }`}
               >
                 <span>{mood.emoji}</span>
@@ -164,6 +169,7 @@ export default function EntryModal() {
           </div>
         </div>
 
+        {/* Tags Section */}
         <div className="space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
             Tags
@@ -202,7 +208,7 @@ export default function EntryModal() {
               className="w-full bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/20 outline-none"
             />
             {newTagInput && filteredTagSuggestions.length > 0 && (
-              <div className="absolute bottom-full mb-2 left-0 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden z-10">
+              <div className="absolute top-full mt-2 left-0 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden z-10">
                 {filteredTagSuggestions.map((s) => (
                   <button
                     key={s}

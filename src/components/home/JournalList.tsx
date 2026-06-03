@@ -3,14 +3,14 @@ import { Entry } from "@/generated/prisma/client";
 import FilteredJournalList from "./FilteredJournalList";
 import { BookOpen } from "lucide-react";
 
-export interface JournalEntryProps {
-  id: string;
-  title: string;
-  content: string;
-  mood: string;
-  tags: string[];
-  createdAt: Date;
-}
+// export interface JournalEntryProps {
+//   id: string;
+//   title: string;
+//   content: string;
+//   mood: string;
+//   tags: string[];
+//   createdAt: Date;
+// }
 
 export default async function JournalList() {
   const PAGE_SIZE = 12;
