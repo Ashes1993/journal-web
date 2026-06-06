@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Session } from "next-auth";
-import { Home, Calendar, User, LayoutDashboard } from "lucide-react";
+import { Home, Calendar, User, LayoutDashboard, PieChart } from "lucide-react";
 import SignOutButton from "./auth/SignOutButton";
 import { usePathname } from "next/navigation";
 
@@ -17,6 +17,7 @@ export default function SideBar({ user }: NavProps) {
   const links = [
     { href: "/", label: "Home", icon: Home },
     { href: "/calendar", label: "Calendar", icon: Calendar },
+    { href: "/insights", label: "Insights", icon: PieChart },
     { href: "/profile", label: "Profile", icon: User },
   ];
 
