@@ -5,9 +5,26 @@ describe("Journal Insights Logic", () => {
   it("should correctly calculate totals and mood distribution", () => {
     // 1. ARRANGE
     const mockEntries = [
-      { mood: "happy", createdAt: "2026-06-01T10:00:00Z" },
-      { mood: "happy", createdAt: "2026-06-02T10:00:00Z" },
-      { mood: "sad", createdAt: "2026-06-03T10:00:00Z" },
+      {
+        mood: "happy",
+        createdAt: "2026-06-01T10:00:00Z",
+        tags: ["random", "test1"],
+      },
+      {
+        mood: "happy",
+        createdAt: "2026-06-02T10:00:00Z",
+        tags: ["random2", "test1"],
+      },
+      {
+        mood: "sad",
+        createdAt: "2026-06-03T10:00:00Z",
+        tags: ["random", "test2"],
+      },
+      {
+        mood: "poker face",
+        createdAt: "2026-06-03T10:00:00Z",
+        tags: ["windows", "test2"],
+      },
     ];
 
     // 2. ACT
