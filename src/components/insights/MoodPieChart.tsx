@@ -56,9 +56,9 @@ export default function MoodPieChart({ moodDistribution }: MoodPieChartProps) {
         Mood Vibe Distribution
       </h3>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+      <div className="flex flex-col items-center justify-between gap-0 mt-4">
         {/* The Graphic Canvas Block */}
-        <div className="h-[220px] w-full max-w-[220px]">
+        <div className="h-[208px] w-full max-w-[220px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -94,7 +94,7 @@ export default function MoodPieChart({ moodDistribution }: MoodPieChartProps) {
         </div>
 
         {/* Legend Map Deck */}
-        <div className="flex-1 grid grid-cols-2 gap-2 w-full sm:w-auto">
+        <div className="flex-1 grid grid-cols-2 gap-2 text-center w-full sm:w-auto">
           {data.map((item) => (
             <div key={item.name} className="flex items-center gap-2 text-sm">
               <div

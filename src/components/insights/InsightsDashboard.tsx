@@ -78,11 +78,11 @@ export default function InsightsDashboard() {
       </div>
 
       {/* Intermediate Interactive Analytics Deck */}
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="grid gap-6 lg:grid-cols-5">
+      <div className="flex flex-col gap-4 w-full xl:flex-row">
+        <div className="w-full xl:w-1/2">
           <MoodPieChart moodDistribution={stats.moodDistribution} />
         </div>
-        <div className="lg:col-span-3">
+        <div className="w-full xl:w-1/2">
           <TopTagsList tags={stats.topTags} />
         </div>
       </div>
