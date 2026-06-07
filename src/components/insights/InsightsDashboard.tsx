@@ -11,6 +11,9 @@ import StatsCard from "./StatsCard";
 import { BarChart3, CalendarDays, Smile } from "lucide-react";
 import { fetchJournalEntries } from "@/actions/journal-entries";
 import { Entry } from "@/generated/prisma/client";
+import JournalHeatmap from "./JournalHeatmap";
+import MoodPieChart from "./MoodPieChart";
+import TopTagsList from "./TopTagsList";
 
 export default function InsightsDashboard() {
   const [range, setRange] = useState<FilterRange>("all");
@@ -28,6 +31,7 @@ export default function InsightsDashboard() {
     }
   }, [journalEntries.length, setInitialEntries]);
 
+  // Pass active range context to process accurate dynamic scopes
   const filteredEntries = filterEntriesByTime(journalEntries, range);
   const stats = calculateJournalInsights(filteredEntries);
 
@@ -72,6 +76,19 @@ export default function InsightsDashboard() {
           icon={<BarChart3 className="h-8 w-8" />}
         />
       </div>
+
+      {/* Intermediate Interactive Analytics Deck */}
+      <div className="grid gap-6 lg:grid-cols-5">
+        <div className="grid gap-6 lg:grid-cols-5">
+          <MoodPieChart moodDistribution={stats.moodDistribution} />
+        </div>
+        <div className="lg:col-span-3">
+          <TopTagsList tags={stats.topTags} />
+        </div>
+      </div>
+
+      {/* Heatmap Section */}
+      <JournalHeatmap activityMap={stats.activityMap} />
     </div>
   );
 }
