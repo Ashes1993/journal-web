@@ -11,6 +11,7 @@ export default function PreferencesForm({
   initialDefaultMood,
 }: PreferencesFormProps) {
   const [defaultMood, setDefaultMood] = useState<string>(initialDefaultMood);
+  const [isMoodsOpen, setIsMoodsOpen] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
@@ -72,18 +73,67 @@ export default function PreferencesForm({
             </p>
           </div>
 
-          <div className="sm:col-span-2">
-            <select
-              value={defaultMood}
-              onChange={(e) => setDefaultMood(e.target.value)}
-              className="w-full max-w-xs rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 dark:focus:border-indigo-400"
+          <div className="sm:col-span-2 relative max-w-xs w-full">
+            {/* Dropdown Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setIsMoodsOpen(!isMoodsOpen)}
+              className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-50 dark:focus:border-indigo-400"
             >
-              {moods.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
+              <span className="capitalize">
+                {moods.find((m) => m.value === defaultMood)?.label ||
+                  defaultMood}
+              </span>
+
+              {/* Chevron Arrow Icon Indicator */}
+              <svg
+                className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${isMoodsOpen ? "rotate-180" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+
+            {/* Custom Dropdown Option Panel Overlay */}
+            {isMoodsOpen && (
+              <>
+                {/* Invisible backing layer to automatically close the panel when clicking anywhere outside */}
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setIsMoodsOpen(false)}
+                />
+
+                <div className="absolute left-0 top-full z-20 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-slate-200 bg-white p-1 shadow-lg dark:border-slate-800 dark:bg-slate-950 animate-in fade-in slide-in-from-top-1 duration-150">
+                  {moods.map((m) => {
+                    const isSelected = m.value === defaultMood;
+                    return (
+                      <button
+                        key={m.value}
+                        type="button"
+                        onClick={() => {
+                          setDefaultMood(m.value);
+                          setIsMoodsOpen(false);
+                        }}
+                        className={`flex w-full items-center rounded-md px-3 py-2 text-sm font-medium capitalize transition-colors text-left ${
+                          isSelected
+                            ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400"
+                            : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-900"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
