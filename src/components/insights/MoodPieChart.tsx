@@ -1,6 +1,6 @@
 "use client";
 
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Tooltip, Sector, PieSectorShapeProps } from "recharts";
 import { MoodDistribution } from "@/types/insights";
 
 interface MoodPieChartProps {
@@ -25,6 +25,17 @@ const DEFAULT_CONFIG = { color: "#cbd5e1", emoji: "📝", label: "Other" };
 
 export default function MoodPieChart({ moodDistribution }: MoodPieChartProps) {
   const rawEntries = Object.entries(moodDistribution);
+
+  // if (!isMounted) {
+  //   return (
+  //     <div className="flex h-[250px] w-full flex-col items-center justify-center gap-3">
+  //       <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600 dark:border-slate-800 dark:border-t-indigo-400" />
+  //       <p className="text-xs font-medium text-slate-400 dark:text-slate-500 animate-pulse">
+  //         Loading analytics...
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   if (rawEntries.length === 0) {
     return (
@@ -58,39 +69,42 @@ export default function MoodPieChart({ moodDistribution }: MoodPieChartProps) {
 
       <div className="flex flex-col items-center justify-between gap-0 mt-4">
         {/* The Graphic Canvas Block */}
-        <div className="h-[208px] w-full max-w-[220px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={3}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const item = payload[0].payload;
-                    return (
-                      <div className="rounded-lg bg-slate-900 px-3 py-2 text-xs text-white shadow-md dark:bg-slate-50 dark:text-slate-900">
-                        <span className="mr-1">{item.emoji}</span>
-                        <span className="font-semibold">{item.name}:</span>{" "}
-                        {item.value} {item.value === 1 ? "entry" : "entries"}
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="flex h-[208px] w-[220px] items-center justify-center">
+          <PieChart width={220} height={208}>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={80}
+              paddingAngle={3}
+              dataKey="value"
+              shape={(props: PieSectorShapeProps) => {
+                const targetPayload = props.payload as
+                  | { color?: string }
+                  | undefined;
+                return (
+                  <Sector {...props} fill={targetPayload?.color || "#cbd5e1"} />
+                );
+              }}
+            />
+
+            <Tooltip
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const item = payload[0].payload;
+                  return (
+                    <div className="rounded-lg bg-slate-900 px-3 py-2 text-xs text-white shadow-md dark:bg-slate-50 dark:text-slate-900">
+                      <span className="mr-1">{item.emoji}</span>
+                      <span className="font-semibold">{item.name}:</span>{" "}
+                      {item.value} {item.value === 1 ? "entry" : "entries"}
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+          </PieChart>
         </div>
 
         {/* Legend Map Deck */}
