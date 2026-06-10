@@ -13,6 +13,35 @@ const ALLOWED_MOODS = [
   "poker face",
 ];
 
+// Server action to update the user's name
+export async function updateUserName(name: string) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized access." };
+    }
+
+    const trimmedName = name.trim();
+    if (!trimmedName || trimmedName.length > 50) {
+      return {
+        success: false,
+        error: "Name must be between 1 and 50 character.",
+      };
+    }
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { name: trimmedName },
+    });
+
+    revalidatePath("/profile");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update user profile name:", error);
+    return { success: false, error: "Internal server error occurred." };
+  }
+}
+
 // Server action to get the user's default mood
 export async function getUserDefaultMood() {
   const session = await auth();
