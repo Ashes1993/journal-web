@@ -1,5 +1,6 @@
 import SideBar from "@/components/SideBar";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import ModalProvider from "@/components/modals/ModalProvider";
 
@@ -9,11 +10,24 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+  const userId = session?.user?.id;
 
   // Route guard: Redirect unauthenticated users safely
-  if (!session) {
+  if (!userId) {
     redirect("/login");
   }
+
+  // Get the default mood to pass onto the Modal Provider
+  const userSettings = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      defaultMood: true,
+    },
+  });
+
+  const defaultMoodString = userSettings?.defaultMood || "happy";
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-200">
@@ -26,7 +40,7 @@ export default async function DashboardLayout({
           {children}
         </section>
       </main>
-      <ModalProvider />
+      <ModalProvider defaultMood={defaultMoodString} />
     </div>
   );
 }

@@ -16,6 +16,10 @@ interface JournalActionResponse {
   error?: string;
 }
 
+interface EntryModalProps {
+  defaultMood: string;
+}
+
 const MOOD_OPTIONS = [
   { label: "happy", emoji: "😊" },
   { label: "sad", emoji: "😢" },
@@ -25,11 +29,11 @@ const MOOD_OPTIONS = [
   { label: "poker face", emoji: "😐" },
 ];
 
-export default function EntryModal() {
+export default function EntryModal({ defaultMood }: EntryModalProps) {
   const { editingEntry, closeModal, updateEntry } = useJournalStore();
 
   const [selectedMood, setSelectedMood] = useState(
-    editingEntry?.mood || "happy",
+    editingEntry?.mood || defaultMood,
   );
   const [title, setTitle] = useState(editingEntry?.title || "");
   const [content, setContent] = useState(editingEntry?.content || "");

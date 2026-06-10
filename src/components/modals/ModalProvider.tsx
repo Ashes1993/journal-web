@@ -4,7 +4,11 @@ import { useJournalStore } from "@/store/useJournalStore";
 import EntryModal from "./EntryModal";
 import { useEffect, useState } from "react";
 
-export default function ModalProvider() {
+interface EntryModalProps {
+  defaultMood: string;
+}
+
+export default function ModalProvider({ defaultMood }: EntryModalProps) {
   const [mounted, setMounted] = useState(false);
   const edittingEntryId = useJournalStore((state) => state.editingEntry?.id);
   const isOpen = useJournalStore((state) => state.isOpen);
@@ -18,5 +22,10 @@ export default function ModalProvider() {
 
   if (!mounted || !isOpen) return null;
 
-  return <EntryModal key={edittingEntryId || "new-entry"} />;
+  return (
+    <EntryModal
+      defaultMood={defaultMood}
+      key={edittingEntryId || "new-entry"}
+    />
+  );
 }
