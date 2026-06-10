@@ -18,16 +18,23 @@ import TopTagsList from "./TopTagsList";
 export default function InsightsDashboard() {
   const [range, setRange] = useState<FilterRange>("all");
   const { journalEntries, setInitialEntries } = useJournalStore();
+  const [isLoading, setIsLoading] = useState<boolean>(
+    journalEntries.length === 0,
+  );
 
   // Check whether we have entries in the store. If not, fetch them.
   useEffect(() => {
     if (journalEntries.length === 0) {
-      fetchJournalEntries().then((res) => {
-        // Safe check to verify data exists before passing to state
-        if (res?.entries) {
-          setInitialEntries(res.entries as Entry[], false);
-        }
-      });
+      fetchJournalEntries()
+        .then((res) => {
+          // Safe check to verify data exists before passing to state
+          if (res?.entries) {
+            setInitialEntries(res.entries as Entry[], false);
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [journalEntries.length, setInitialEntries]);
 
@@ -40,6 +47,17 @@ export default function InsightsDashboard() {
     { label: "This Month", value: "month" },
     { label: "This Year", value: "year" },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-3">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-indigo-600 dark:border-slate-800 dark:border-t-indigo-400" />
+        <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse">
+          Analyzing your journal entries...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
