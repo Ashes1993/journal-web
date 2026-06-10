@@ -18,21 +18,29 @@ export default async function DashboardLayout({
   }
 
   // Get the default mood to pass onto the Modal Provider
-  const userSettings = await prisma.user.findUnique({
+  const dbUser = await prisma.user.findUnique({
     where: {
       id: userId,
     },
     select: {
       defaultMood: true,
+      name: true,
     },
   });
 
-  const defaultMoodString = userSettings?.defaultMood || "happy";
+  const defaultMoodString = dbUser?.defaultMood || "happy";
+
+  const liveUserPayload = session?.user
+    ? {
+        ...session.user,
+        name: dbUser?.name || session.user.name,
+      }
+    : undefined;
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-200">
       {/* Structural Sidebar Layer */}
-      <SideBar user={session?.user ?? undefined} />
+      <SideBar user={liveUserPayload} />
 
       {/* Main Content Area Viewport */}
       <main className="flex-1 flex flex-col min-w-0 p-3 sm:p-4 md:p-6 lg:p-8">
