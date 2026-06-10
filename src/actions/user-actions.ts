@@ -13,6 +13,19 @@ const ALLOWED_MOODS = [
   "poker face",
 ];
 
+// Server action to get the user's default mood
+export async function getUserDefaultMood() {
+  const session = await auth();
+  if (!session?.user?.id) return "happy";
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { defaultMood: true },
+  });
+
+  return user?.defaultMood || "happy";
+}
+
 // Server action to update the default mood
 export async function updateDefaultMood(mood: string) {
   try {
