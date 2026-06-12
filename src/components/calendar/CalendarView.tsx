@@ -72,9 +72,9 @@ export default function CalendarView() {
 
   return (
     <div className="p-2 bg-white dark:bg-slate-900 rounded-2xl">
-      <div className="flex flex-col 2xl:flex-row 2xl:gap-8">
+      <div className="flex flex-col xl:flex-row xl:gap-8 items-start w-full">
         {/* Calendar Section */}
-        <div className="md:col-span-5 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/50 shadow-sm h-fit">
+        <div className="w-full xl:w-[380px] xl:sticky xl:top-6 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/50 shadow-sm h-fit shrink-0">
           <DayPicker
             mode="single"
             selected={selectedDay}
@@ -120,7 +120,7 @@ export default function CalendarView() {
         </div>
 
         {/* Daily Entries Section */}
-        <div className="lg:col-span-7 space-y-6 mt-8 max-w-3xl mx-auto">
+        <div className="flex-1 w-full space-y-6 mt-8 xl:mt-0 max-w-3xl">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
             <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
               <CalendarDays className="h-5 w-5 opacity-70" />
