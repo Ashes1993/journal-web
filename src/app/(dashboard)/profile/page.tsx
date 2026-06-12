@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import ProfileContainer from "@/components/profile/ProfileContainer";
 
 export const metadata = {
-  title: "Profile | Journal",
+  title: "Profile | Reflect",
   description:
     "Manage your profile identity, user preferences, and personal data.",
 };
