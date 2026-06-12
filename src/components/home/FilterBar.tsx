@@ -46,7 +46,7 @@ export default function FilterBar({
 
   return (
     <div className="flex items-center gap-2">
-      {/* --- MOOD POPOVER BUTTON --- */}
+      {/* Mood Button */}
       <div className="relative" ref={moodRef}>
         <button
           type="button"
@@ -54,7 +54,7 @@ export default function FilterBar({
             setIsMoodOpen(!isMoodOpen);
             setIsTagOpen(false);
           }}
-          className={`px-3 py-2 text-xs bg-card border border-muted-border rounded-2xl hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 cursor-pointer ${
+          className={`px-3 py-2 text-xs bg-card border border-muted-border rounded-2xl hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 cursor-pointer whitespace-nowrap ${
             isMoodOpen
               ? "border-slate-400 dark:border-slate-600 ring-2 ring-slate-500/5"
               : ""
@@ -103,7 +103,7 @@ export default function FilterBar({
         )}
       </div>
 
-      {/* --- TAGS POPOVER BUTTON --- */}
+      {/* Tags Button */}
       <div className="relative" ref={tagRef}>
         <button
           type="button"
@@ -111,7 +111,7 @@ export default function FilterBar({
             setIsTagOpen(!isTagOpen);
             setIsMoodOpen(false);
           }}
-          className={`px-3 py-2 text-xs bg-card border border-muted-border rounded-2xl hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 cursor-pointer ${
+          className={`px-3 py-2 text-xs bg-card border border-muted-border rounded-2xl hover:border-slate-300 dark:hover:border-slate-700 transition-all flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-300 cursor-pointer whitespace-nowrap ${
             isTagOpen
               ? "border-slate-400 dark:border-slate-600 ring-2 ring-slate-500/5"
               : ""

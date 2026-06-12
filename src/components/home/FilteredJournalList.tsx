@@ -82,10 +82,12 @@ export default function FilteredJournalList({
     <div className="relative">
       {/* Sticky Toolbar */}
       <div className="sticky top-0 z-30 -mx-4 px-4 py-4 mb-6 bg-app-bg/80 backdrop-blur-md border-b border-transparent md:border-none transition-all">
-        <div className="flex flex-col md:flex-row gap-3 md:items-center">
+        <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
+          {/* Search Bar */}
           <div className="flex-1">
             <SearchBar />
           </div>
+
           {/* Houses Mood, Tags, and Sort tightly side-by-side */}
           <div className="flex flex-wrap items-center gap-2 md:gap-3">
             <FilterBar availableTags={uniqueAvailableTags} />
