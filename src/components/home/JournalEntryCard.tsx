@@ -4,6 +4,8 @@ import { deleteJournalEntry } from "@/actions/journal-entries";
 import { useJournalStore } from "@/store/useJournalStore";
 import { Entry } from "@/generated/prisma/client";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 
 const MOOD_EMOJIS: Record<string, string> = {
   happy: "😊",
@@ -14,9 +16,16 @@ const MOOD_EMOJIS: Record<string, string> = {
   "poker face": "😐",
 };
 
-export default function JournalEntryCard({ entry }: { entry: Entry }) {
+export default function JournalEntryCard({
+  entry,
+  onDeleteSuccess,
+}: {
+  entry: Entry;
+  onDeleteSuccess?: (id: string) => void;
+}) {
   const { openModal, removeEntry, setIsDeleting, isDeleting } =
     useJournalStore();
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
   const isThisDeleting = isDeleting === entry.id;
 
@@ -30,23 +39,26 @@ export default function JournalEntryCard({ entry }: { entry: Entry }) {
     });
   };
 
-  // Delete handler with confirmation and loading state
-  const handleDelete = async (e: React.MouseEvent) => {
+  // Trigger Delete Confirmation
+  const triggerDeletePrompt = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    setShowConfirm(true);
+  };
 
-    if (!confirm("Are you sure you want to permanently purge this entry?"))
-      return;
-
+  const executePurge = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     try {
       setIsDeleting(entry.id);
       const response = await deleteJournalEntry(entry.id);
       if (response.success) {
         removeEntry(entry.id);
+        if (onDeleteSuccess) onDeleteSuccess(entry.id);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Failed to delete entry:", error);
     } finally {
       setIsDeleting(null);
+      setShowConfirm(false);
     }
   };
 
@@ -95,7 +107,7 @@ export default function JournalEntryCard({ entry }: { entry: Entry }) {
         <div className="flex justify-end gap-1 pt-3 border-t border-slate-100 dark:border-slate-800/60">
           <button
             type="button"
-            onClick={handleDelete}
+            onClick={triggerDeletePrompt}
             disabled={isThisDeleting}
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all disabled:opacity-40 cursor-pointer"
           >
@@ -104,6 +116,52 @@ export default function JournalEntryCard({ entry }: { entry: Entry }) {
           </button>
         </div>
       </div>
+
+      {showConfirm &&
+        createPortal(
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowConfirm(false);
+            }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4 animate-in fade-in duration-100"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-card border border-muted-border p-6 rounded-2xl max-w-sm w-full shadow-xl space-y-4 scale-in duration-150"
+            >
+              <div className="space-y-1.5">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Purge Entry?
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Are you completely sure? This removes your written reflections
+                  and mood tracking data for this entry permanently.
+                </p>
+              </div>
+              <div className="flex justify-end gap-2 text-xs font-semibold pt-1">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowConfirm(false);
+                  }}
+                  className="px-4 py-2 border border-muted-border hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all text-slate-600 dark:text-slate-400 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={executePurge}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all shadow-xs cursor-pointer"
+                >
+                  Permanently Delete
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

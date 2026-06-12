@@ -148,7 +148,11 @@ export default function CalendarView() {
                 <JournalEntryCard
                   key={entry.id}
                   entry={entry}
-                  // Pass your existing state handlers here for Edit/Delete parity
+                  onDeleteSuccess={(deletedId) => {
+                    setEntriesForSelectedDay((prev) =>
+                      prev.filter((e) => e.id !== deletedId),
+                    );
+                  }}
                 />
               ))
             ) : (
