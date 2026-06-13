@@ -13,6 +13,7 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       DATABASE_URL: "postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+      ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
 
     steps:
       - name: Checkout Code
