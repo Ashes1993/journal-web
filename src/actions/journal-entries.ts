@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { Entry } from "@/generated/prisma/client";
 import { revalidatePath } from "next/cache";
+import { encrypt, decrypt } from "@/lib/crypto";
 
 // Type Omit to exclude id and createdAt from the Entry type
 export type CreateEntryInput = Omit<
@@ -20,7 +21,7 @@ export async function fetchJournalEntries({
 
   if (!userId) return { success: false, entries: [] };
 
-  const journalEntries: object[] = await prisma.entry.findMany({
+  const journalEntries = (await prisma.entry.findMany({
     where: {
       userId: userId || undefined,
     },
@@ -29,8 +30,14 @@ export async function fetchJournalEntries({
     },
     skip: skip,
     ...(take !== undefined ? { take } : {}),
-  });
-  return { success: true, entries: journalEntries };
+  })) as Entry[];
+
+  // Decrypt data streams safely before exposing to client layouts
+  const decryptedEntries = journalEntries.map((entry) => ({
+    ...entry,
+    content: decrypt(entry.content),
+  }));
+  return { success: true, entries: decryptedEntries };
 }
 
 // Server action to create a new journal entry for the authenticated user
@@ -46,7 +53,7 @@ export async function createJournalEntry(data: CreateEntryInput) {
     await prisma.entry.create({
       data: {
         title: data.title,
-        content: data.content,
+        content: encrypt(data.content),
         mood: data.mood,
         tags: data.tags,
         userId: userId,
@@ -124,7 +131,7 @@ export async function updateJournalEntry(
       },
       data: {
         title: data.title,
-        content: data.content,
+        content: encrypt(data.content),
         mood: data.mood,
         tags: data.tags,
       },
@@ -193,7 +200,13 @@ export async function fetchJournalEntriesForDate(date: Date) {
         createdAt: "desc",
       },
     });
-    return { success: true, entries: entries };
+
+    const decryptedEntries = entries.map((entry) => ({
+      ...entry,
+      content: decrypt(entry.content),
+    }));
+
+    return { success: true, entries: decryptedEntries };
   } catch (error) {
     console.error("Database Error:", error);
     return { success: false, entries: [] };
