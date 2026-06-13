@@ -13,8 +13,32 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Home | Reflect",
-  description: "Capture your thoughts, moods, and milestones.",
+  title: {
+    default: "Reflect | Privacy-First Journal",
+    template: "%s | Reflect",
+  },
+  description:
+    "Secure, cryptographically protected personal journal for your daily thoughts, reflections, and mood tracking.",
+  metadataBase: new URL("https://reflect-journal.vercel.app"),
+
+  // Open Graph (Controls WhatsApp, Telegram, LinkedIn, Facebook previews)
+  openGraph: {
+    title: "Reflect | Privacy-First Journal",
+    description:
+      "Secure, cryptographically protected personal journal for your daily thoughts and mood tracking.",
+    url: "https://reflect-journal.vercel.app",
+    siteName: "Reflect",
+    locale: "en_US",
+    type: "website",
+  },
+
+  // Twitter Cards (Controls X/Twitter link expansion previews)
+  twitter: {
+    card: "summary_large_image",
+    title: "Reflect | Privacy-First Journal",
+    description:
+      "Secure, cryptographically protected personal journal for your daily thoughts.",
+  },
 };
 
 export default function RootLayout({
