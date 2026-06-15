@@ -10,6 +10,8 @@ export default defineConfig({
     seed: "npx tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env["DIRECT_URL"],
+    url:
+      process.env["DIRECT_URL"] ??
+      "postgresql://mock_user:mock_pass@localhost:5432/mock_db",
   },
 });
