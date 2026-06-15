@@ -30,7 +30,7 @@ export default function SideBar({ user }: NavProps) {
             <LayoutDashboard className="text-white w-6 h-6" />
           </div>
           <h1 className="text-xl font-bold tracking-tight text-app-text">
-            Journal
+            Reflect
           </h1>
         </div>
 
@@ -65,11 +65,11 @@ export default function SideBar({ user }: NavProps) {
             <div className="space-y-4">
               <div className="flex items-center gap-3 px-2">
                 <Image
-                  src={user.image || "/default-avatar.png"}
+                  src={user.image || "/default-avatar.svg"}
                   alt={user.name || "User"}
                   width={36}
                   height={36}
-                  className="rounded-full ring-2 ring-muted-border"
+                  className="w-9 h-9 rounded-full ring-2 ring-muted-border shrink-0 object-cover"
                 />
                 <div className="overflow-hidden">
                   <p className="text-sm font-medium text-app-text truncate">
