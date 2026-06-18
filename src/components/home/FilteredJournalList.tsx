@@ -142,7 +142,7 @@ export default function FilteredJournalList({
                            disabled:opacity-50 flex items-center justify-center cursor-pointer"
               >
                 {isLoadingMore ? (
-                  <JournalLoader size="sm" />
+                  <JournalLoader message="" heightClassName="sm" />
                 ) : (
                   "Load More Entries"
                 )}
