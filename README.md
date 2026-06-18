@@ -1,45 +1,45 @@
 # Journal Platform (Reflect)
 
-A production-grade, full-stack diary and analytical journaling application engineered for low-latency client interactions, strict data isolation, and comprehensive insight calculations. The platform leverages modern serverless primitives alongside robust, isolated execution environments to guarantee performance and security at scale.
+A full-stack, personal journaling and analytics application built for speed, security, and clean data isolation. It leverages a modern serverless architecture to ensure snappy client interactions and safe database operations.
 
 🚀 [Live Production Deployment](https://reflect-journalapp.vercel.app)
 
 ---
 
-## 🛠️ System Architecture & Tech Stack
+## 🛠️ Tech Stack & Architecture
 
-- **Application Core:** Next.js 16 (App Router) utilizing the Turbopack compilation engine. Built entirely on Next.js Server Actions for secure, form-driven state transitions without exposed REST endpoints.
-- **Database & ORM:** PostgreSQL hosted on Neon's serverless compute framework. Interfaced via Prisma v7 using an environment-isolated, configuration-driven data tier.
-- **Identity Management:** NextAuth.js backed by Google OAuth 2.0 protocol validation and cryptographically signed server-side sessions.
-- **UI/UX Framework:** TailwindCSS utilizing fluid layout utilities, responsive design systems, and strict layout-shift mitigation techniques.
-- **State Management:** Zustand for high-performance, decoupled client-side global state coordination, tracking global application view states and filtering parameters without the execution overhead of React Context providers.
-
----
-
-## 💎 Core Platform Capabilities
-
-Based on verified integration matrices, the platform handles complex, multi-layered workflows across its lifecycles:
-
-- **Rich Entry Operations:** Complete CRUD orchestration supporting titles, contents, granular mood profiles, and dynamic tag matrices.
-- **Deep Memory Modifications:** Advanced mutation handling that processes deep state differentials when editing existing journal history without polluting legacy references.
-- **Analytical Insights Engine:** Decoupled business logic that tracks journal entries over time, running isolated computational logic to map emotional metrics, word frequency, and historical tracking stats.
-- **Global User Preferences:** Dynamic configuration contexts allowing users to tailor UI layers, notification matrices, and personal privacy flags.
+- **Framework:** Next.js 16 (App Router) with Turbopack. Powered entirely by Next.js Server Actions for secure, form-driven state changes without the need to expose traditional REST endpoints.
+- **Database & ORM:** Serverless PostgreSQL hosted on Neon, paired with Prisma v7 for type-safe database queries.
+- **Authentication:** NextAuth.js configured with Google OAuth 2.0 and secure server-side sessions.
+- **Styling:** TailwindCSS for responsive layouts, utility-first styling, and optimized rendering to prevent layout shifts.
+- **State Management:** Zustand for lightweight client-side state management, handling UI views and search filters without the re-render overhead of React Context.
 
 ---
 
-## 🔄 Database Infrastructure & Topography (Prisma v7)
+## 💎 Key Features
 
-To bypass the typical connection constraints inherent to serverless execution spikes, the application explicitly decouples runtime database access from administrative schema management via `prisma.config.ts`:
+The app handles complex, multi-layered data workflows seamlessly across the user lifecycle:
 
-- **Application Runtime Proxy (`DATABASE_URL`):** Utilizes Neon's transaction-mode connection pooler channel (via PgBouncer settings) to automatically absorb sudden serverless compute scale-outs.
-- **Administrative CLI Pipeline (`DIRECT_URL`):** Establishes an unpooled direct connection route reserved strictly for structural database transformations, avoiding pool-lock engine faults during schema shifts.
-- **Local Sandboxing:** Operates entirely within an isolated local PostgreSQL container context, ensuring structural mutations during prototyping never touch live production pools.
+- **Full CRUD Journaling:** Easily manage entries with titles, markdown content, mood selectors, and dynamic tags.
+- **Optimized Editing:** Smooth mutation handling that accurately updates state differentials when editing old entries, ensuring history updates cleanly without reference bugs.
+- **Analytics Engine:** Behind-the-scenes business logic that parses journal data over time to compute mood metrics, word frequencies, and historical trends.
+- **User Settings:** Global configuration toggles for customizing UI layers, privacy flags, and personal preferences.
 
 ---
 
-## 🧪 Testing Matrix & Directory Mapping
+## 🔄 Database & Connection Pooling (Prisma v7)
 
-The application splits quality assurance workflows across distinct processing boundaries based on execution cost and environmental needs. Here is exactly where every file lives, what it handles, and where its execution results output:
+To prevent serverless functions from exhausting database connections during high traffic, the app splits runtime access and schema management inside `prisma.config.ts`:
+
+- **App Runtime (`DATABASE_URL`):** Connects via Neon's transaction-mode pooler (PgBouncer) to easily handle sudden serverless scale-outs.
+- **Migrations & CLI (`DIRECT_URL`):** A direct, unpooled connection reserved strictly for running database migrations, preventing pool-lock errors.
+- **Local Development:** Runs against a local PostgreSQL database to keep prototyping safe and isolated from production data.
+
+---
+
+## 🧪 Testing Setup & File Structure
+
+The test suite is split between lightweight unit/integration tests and full full-stack end-to-end flows. Here is a breakdown of where tests live and how they run:
 
 ```text
 journal-platform/
@@ -98,6 +98,8 @@ Updating entry with data: {
 ```
 
 ### 2. Full-Stack End-to-End Suite (Playwright)
+
+Run locally or via CI pipelines:
 
 ```text
 Running 4 tests using 2 workers
