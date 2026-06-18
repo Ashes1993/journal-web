@@ -9,7 +9,6 @@ export default async function JournalList() {
   const response = await fetchJournalEntries({ skip: 0, take: PAGE_SIZE + 1 });
   const initialEntries = (response?.entries || []) as Entry[];
 
-  // --- TRUE DATABASE EMPTY STATE ---
   // Displayed only when the user has zero records written down
   if (initialEntries.length === 0) {
     return (
