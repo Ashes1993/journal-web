@@ -1,4 +1,4 @@
-import "dotenv/config"; // Senior Requirement: Hydrate process.env before initializing the connection pool
+import "dotenv/config";
 import { test as setup } from "@playwright/test";
 import { Pool } from "pg";
 import { TEST_USER_ID, TEST_USER_EMAIL } from "./constants";
@@ -6,7 +6,7 @@ import { TEST_USER_ID, TEST_USER_EMAIL } from "./constants";
 const authFile = "playwright/.auth/user.json";
 
 setup("Authenticate via Environment Backdoor", async ({ page }) => {
-  // 1. ISOLATED DATABASE SEEDING
+  // 1. Database seeding
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
   try {
@@ -17,7 +17,7 @@ setup("Authenticate via Environment Backdoor", async ({ page }) => {
       ON CONFLICT (email) DO UPDATE 
       SET name = EXCLUDED.name;
     `,
-      [TEST_USER_ID, TEST_USER_EMAIL, "Test User", "neutral"],
+      [TEST_USER_ID, TEST_USER_EMAIL, "Test User", "happy"],
     );
   } catch (dbError) {
     console.error(
@@ -29,7 +29,7 @@ setup("Authenticate via Environment Backdoor", async ({ page }) => {
     await pool.end();
   }
 
-  // 2. BROWSER AUTHENTICATION PHASE
+  // 2. Athenrication phase
   await page.goto("/api/auth/signin");
 
   await page.fill('input[name="email"]', TEST_USER_EMAIL);

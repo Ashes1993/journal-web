@@ -99,14 +99,14 @@ export function calculateJournalInsights(
     const dateKey = formatDateKey(entry.createdAt);
     activity[dateKey] = (activity[dateKey] || 0) + 1;
 
-    // Tag Accumulator
+    // Tag Collector
     if (Array.isArray(entry.tags)) {
       entry.tags.forEach((tag) => {
         tagCounts[tag] = (tagCounts[tag] || 0) + 1;
       });
     }
 
-    // Momentum Accumulator
+    // Momentum Collector
     const date = new Date(entry.createdAt);
     const label =
       range === "month"

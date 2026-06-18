@@ -8,7 +8,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
-// 1. Structural mocks for database, authentication, and caching headers
+// Structural mocks for database, authentication, and caching headers
 vi.mock("@/lib/db", () => ({
   prisma: {
     entry: {
@@ -36,9 +36,7 @@ describe("data-management server actions", () => {
     vi.clearAllMocks();
   });
 
-  /* ========================================================================
-     exportJournalData Tests
-     ======================================================================== */
+  // exportJournalData Tests
   describe("exportJournalData", () => {
     it("should reject unauthenticated data export requests", async () => {
       mockAuthEngine.mockResolvedValue(null);
@@ -73,9 +71,7 @@ describe("data-management server actions", () => {
     });
   });
 
-  /* ========================================================================
-     deleteAllEntries Tests
-     ======================================================================== */
+  // deleteAllEntries Tests
   describe("deleteAllEntries", () => {
     it("should reject unauthenticated mass erasure requests", async () => {
       mockAuthEngine.mockResolvedValue(null);
@@ -100,9 +96,7 @@ describe("data-management server actions", () => {
     });
   });
 
-  /* ========================================================================
-     deleteAccount Tests
-     ======================================================================== */
+  // deleteAccount Tests
   describe("deleteAccount", () => {
     it("should reject unauthenticated termination requests", async () => {
       mockAuthEngine.mockResolvedValue(null);

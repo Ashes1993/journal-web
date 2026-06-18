@@ -112,7 +112,7 @@ export const useJournalStore = create<JournalState>()(
     }),
     {
       name: "journal-storage",
-      // Only save 'sortBy', don't save 'isOpen'
+      // Only save 'sortBy'
       partialize: (state) => ({ sortBy: state.sortBy }),
     },
   ),

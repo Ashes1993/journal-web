@@ -3,7 +3,7 @@ import { updateDefaultMood } from "../user-actions";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 
-// 1. Establish structural mocks for external boundaries
+// Establish structural mocks for external boundaries
 vi.mock("@/lib/db", () => ({
   prisma: {
     user: {
@@ -59,7 +59,7 @@ describe("user-preferences server action", () => {
       expires: "2026-06-09T20:58:35.000Z",
     });
 
-    // Uses Awaited and ReturnType inference to satisfy Prisma's deep types without using 'any'
+    // Uses Awaited and ReturnType inference to satisfy Prisma's deep types
     vi.mocked(prisma.user.update).mockResolvedValue({
       id: "test-user-uuid",
       defaultMood: "excited",

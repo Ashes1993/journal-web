@@ -15,7 +15,7 @@ if (!SECRET_KEY || SECRET_KEY.length !== 64) {
 
 const KEY_BUFFER = Buffer.from(SECRET_KEY, "hex");
 
-// Encrypts a plain text string into an obfuscated iv:tag:ciphertext format
+// Encrypts a plain text string into an ciphered format
 
 export function encrypt(text: string): string {
   if (!text) return "";
@@ -32,7 +32,7 @@ export function encrypt(text: string): string {
   return `${iv.toString(ENCODING)}:${authTag.toString(ENCODING)}:${encrypted}`;
 }
 
-// Decrypts an obfuscated iv:tag:ciphertext string back to plain text
+// Decrypts an ciphered string back to plain text
 export function decrypt(encryptedData: string): string {
   if (!encryptedData) return "";
 

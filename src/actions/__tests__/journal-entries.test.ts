@@ -10,7 +10,7 @@ import {
 } from "../journal-entries";
 import type { Entry } from "@/generated/prisma/client";
 
-// 1. Module-Level Isolation Mocks
+// Module-Level Isolation Mocks
 vi.mock("@/auth", () => ({
   auth: vi.fn(),
 }));
@@ -35,7 +35,7 @@ vi.mock("@/lib/crypto", () => ({
   decrypt: vi.fn((text: string) => text.replace("encrypted_", "")),
 }));
 
-// 2. Type-Safe Mock Binding via double-casting to bypass middleware overloads
+// Type-Safe Mock Binding via double-casting
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
