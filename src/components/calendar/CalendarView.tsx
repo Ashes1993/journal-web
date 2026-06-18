@@ -50,15 +50,16 @@ export default function CalendarView() {
   // Sync Selected Day Feed (Daily View)
   useEffect(() => {
     if (!selectedDay) {
-      // Use requestAnimationFrame to avoid synchronous cascading renders
       const frame = requestAnimationFrame(() => setEntriesForSelectedDay([]));
       return () => cancelAnimationFrame(frame);
     }
 
+    const dateIsoString = selectedDay.toISOString();
+
     async function getDailyEntries() {
       setLoading(true);
       try {
-        const response = await fetchJournalEntriesForDate(selectedDay as Date);
+        const response = await fetchJournalEntriesForDate(dateIsoString);
         if (response.success) {
           setEntriesForSelectedDay(response.entries);
         }
