@@ -14,7 +14,7 @@ model User {
   emailVerified DateTime?
   image     String?
 
-  defaultMood String  @default("neutral")
+  defaultMood String  @default("happy")
 
   // Relations
   accounts   Account[]

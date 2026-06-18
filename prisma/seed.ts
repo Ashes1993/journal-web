@@ -6,7 +6,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 // Establishing a native database communication connection pool
 const pool = new Pool({ connectionString: process.env["DATABASE_URL"] });
 
-// Wrapping the database pool in the prisma v7 Driver Adapter
+// Wrapping the database pool in the prisma Driver Adapter
 const adapter = new PrismaPg(pool);
 
 const prisma = new PrismaClient({ adapter });
