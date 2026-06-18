@@ -264,7 +264,7 @@ describe("Journal Entries Server Actions Suite", () => {
       mockPrismaEntry.findMany.mockResolvedValue([] as unknown as Entry[]);
 
       const targetDate = new Date(2026, 5, 14);
-      await fetchJournalEntriesForDate(targetDate);
+      await fetchJournalEntriesForDate(targetDate.toISOString());
 
       const expectedStart = new Date(targetDate);
       expectedStart.setHours(0, 0, 0, 0);
