@@ -54,12 +54,20 @@ export default function CalendarView() {
       return () => cancelAnimationFrame(frame);
     }
 
-    const dateIsoString = selectedDay.toISOString();
+    // Calculate absolute local midnight start and end boundaries on the client
+    const start = new Date(selectedDay);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(selectedDay);
+    end.setHours(23, 59, 59, 999);
 
     async function getDailyEntries() {
       setLoading(true);
       try {
-        const response = await fetchJournalEntriesForDate(dateIsoString);
+        const response = await fetchJournalEntriesForDate(
+          start.toISOString(),
+          end.toISOString(),
+        );
         if (response.success) {
           setEntriesForSelectedDay(response.entries);
         }

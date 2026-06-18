@@ -175,27 +175,22 @@ export async function fetchJournalEntriesForMonth(year: number, month: number) {
 }
 
 // Server action to fetch journal entries for a specific date for the authenticated user
-export async function fetchJournalEntriesForDate(dateIsoString: string) {
+export async function fetchJournalEntriesForDate(
+  startIsoString: string,
+  endIsoString: string,
+) {
   const session = await auth();
   const userId = session?.user?.id;
 
   if (!userId) return { success: false, entries: [] };
 
   try {
-    const targetDate = new Date(dateIsoString);
-
-    const startOfDay = new Date(targetDate);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(targetDate);
-    endOfDay.setHours(23, 59, 59, 999);
-
     const entries = await prisma.entry.findMany({
       where: {
         userId: userId,
         createdAt: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: new Date(startIsoString),
+          lte: new Date(endIsoString),
         },
       },
       orderBy: {
